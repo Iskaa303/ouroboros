@@ -1,5 +1,5 @@
-use artificial_memory::ingest;
 use eyre::Result;
+use ouroboros::ingest;
 use std::path::PathBuf;
 
 #[tokio::main]

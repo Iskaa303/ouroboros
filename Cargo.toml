@@ -1,5 +1,5 @@
 [package]
-name = "artificial_memory"
+name = "ouroboros"
 version = "0.0.1"
 edition = "2024"
 authors = ["Iskander 'Iskaa303' Madikhan"]
