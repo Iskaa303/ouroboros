@@ -1,31 +1,32 @@
+mod process;
+mod storage;
+
 use eyre::Result;
-use ouroboros::{digest, ingest, vector_store::VectorStore};
-use std::path::PathBuf;
+use log::info;
+use process::Processor;
+use storage::FileStorage;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let test_path = PathBuf::from("test.txt");
+    dotenvy::dotenv().ok();
+    env_logger::init();
 
-    println!("Ingesting file to Intermediate Memory...");
-    ingest::process(test_path.clone()).await?;
-    println!("Processed file: {:?}", test_path);
+    info!("Starting Parallel Versioned Storage...");
 
-    println!("Digesting file to Final Memory...");
-    let mut vector_store = VectorStore::load(PathBuf::from("memory/vectors.json")).await?;
-    let digester = digest::Digester::new().await?;
+    let mut storage = FileStorage::new();
+    storage.add("./tests/test2.txt").await;
+    storage.add("./tests").await;
+    storage
+        .add(vec![
+            "./src/main.rs",
+            "./src/storage.rs",
+            "./src/process.rs",
+        ])
+        .await;
 
-    digester.digest_file(&test_path, &mut vector_store).await?;
-    println!("Digested file to Final Memory.");
+    info!("Collected {} unique files", storage.len());
 
-    println!("Searching for 'test'...");
-    println!(
-        "Vector store contains {} entries.",
-        vector_store.entries.len()
-    );
-    if let Some(entry) = vector_store.entries.first() {
-        println!("First entry ID: {}", entry.id);
-        println!("First entry Preview: {}", entry.content_preview);
-    }
+    Processor::process_all(storage.paths())?;
 
     Ok(())
 }

@@ -1,3 +1,0 @@
-Test text for pure testing, doesn't mean anything. What it contains however is some info about Ouroboros.
-Test editing.
-Test editing more.
