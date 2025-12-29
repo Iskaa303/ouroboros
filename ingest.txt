@@ -1,0 +1,5 @@
+./tests/test2.txt
+./tests
+./src/main.rs
+./src/storage.rs
+./src/process.rs
